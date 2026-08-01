@@ -1,0 +1,31 @@
+using UnityEngine;
+
+public static class GerstnerWaveDisplacement
+{
+    private static Vector3 GerstnerWave(Vector3 position, float steepness, float wavelength, float speed, float direction)
+    {
+        direction = direction * 2 - 1;
+        Vector2 d = new Vector2(Mathf.Cos(3.14f * direction), Mathf.Sin(3.14f * direction)).normalized;
+        float k = 2f * 3.14f / wavelength;
+        float f = k * (Vector2.Dot(d, new Vector2(position.x, position.z)) - speed * Time.time);
+        float a = steepness / k;
+        
+        return new Vector3(
+            d.x * (a * Mathf.Cos(f)), 
+            a * Mathf.Sin(f),
+            d.y * (a * Mathf.Cos(f))
+            );
+    }
+
+    public static Vector3 GetWaveDisplacement(Vector3 position, float steepness, float wavelength, float speed, Vector4 directions)
+    {
+        Vector3 offset = Vector3.zero;
+
+        offset += GerstnerWave(position, steepness, wavelength, speed, directions[0]);
+        offset += GerstnerWave(position, steepness, wavelength, speed, directions[1]);
+        offset += GerstnerWave(position, steepness, wavelength, speed, directions[2]);
+        offset += GerstnerWave(position, steepness, wavelength, speed, directions[3]);
+
+        return offset;
+    }
+}
